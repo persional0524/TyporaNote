@@ -1,2 +1,2 @@
 # TyporaNote
-TyporaNote dec
+TyporaNote good good study，day day up。
