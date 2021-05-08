@@ -35,6 +35,13 @@ sed -n '$=' nowcoder.txt
 # gawk命令
 gawk '{print NR}' nowcoder.txt | tail -n1
 gawk 'END{print NR}' nowcoder.txt
+
+line=0
+while read p
+do
+    ((line++))
+done < ./nowcoder.txt
+echo $line
 ```
 
 ### 2.经常查看日志的时候，会从文件的末尾往前查看，于是请你写一个 bash脚本以输出一个文本文件 nowcoder.txt中的最后5行,事例同第一题
@@ -542,5 +549,128 @@ do
     let "sum+=$r"
 done 
 echo "sum is ${sum}" < nowcoder.txt 
+```
+
+### 13.写一个 bash脚本以实现一个需求，去掉输入中含有this的语句，把不含this的语句输出
+
+示例:
+假设输入如下：
+that is your bag
+is this your bag?
+to the degree or extent indicated.
+there was a court case resulting from this incident
+welcome to nowcoder
+
+
+你的脚本获取以上输入应当输出：
+to the degree or extent indicated.
+welcome to nowcoder
+
+说明:
+你可以不用在意输出的格式，包括空格和换行
+
+```shell
+grep -v 'this' ./nowcoder.txt
+#####################################
+sed '/this/d' ./nowcoder.txt
+#####################################
+awk '$0!~/this/ {print $0}'
+#####################################
+#!/bin/bash
+while read line
+do
+    flag=0
+    for i in $line
+    do
+        if [[ $i = "this" ]];then
+            flag=1
+            break
+        fi
+    done
+    if [[ $flag -eq 0 ]];then
+        echo $line
+    fi
+done < nowcoder.txt
+```
+
+####  正则运算符
+
+| 运算符 | 描述                             |
+| ------ | -------------------------------- |
+| ~ !~   | 匹配正则表达式和不匹配正则表达式 |
+
+### 14.写一个bash脚本以实现一个需求，求输入的一个的数组的平均值
+
+第1行为输入的数组长度N
+第2~N行为数组的元素，如以下为:
+数组长度为4，数组元素为1 2 9 8
+示例:
+4
+1
+2
+9
+8
+
+那么平均值为:5.000(保留小数点后面3位)
+你的脚本获取以上输入应当输出：
+5.000
+
+```shell
+linecnt=0
+while read line
+do
+    if [[ $linecnt -eq 0 ]];then
+           a=$line
+    else
+           let b=b+$line
+    fi
+let linecnt=linecnt+1
+done<./nowcoder.txt
+echo "scale=3;$b/$a"|bc
+#####################################
+awk '{
+    if (NR==1) total=$1;
+        else sum+=$1
+}
+    END{
+        printf("%.3f",sum/total);
+    }
+    ' $1
+#####################################
+awk '{if(NR==1) total=$1; else{sum+=$1} } END {printf ("%.3f" , sum / total)}' $1
+```
+
+### 15.写一个 bash脚本以实现一个需求，去掉输入中的含有B和b的单词
+
+示例:
+假设输入如下：
+big
+nowcoder
+Betty
+basic
+test
+
+
+你的脚本获取以上输入应当输出：
+nowcoder test
+
+说明:
+你可以不用在意输出的格式，空格和换行都行
+
+```shell
+grep -v -E 'b|B' nowcoder.txt
+grep -iv "b"
+grep -v '[bB]' 
+
+cat nowcoder.txt | grep -v -E 'b|B' 
+cat nowcoder.txt|grep -vi "b"
+
+awk '$0!~/b|B/ {print $0}' nowcoder.txt
+awk '!/[bB]/'
+
+
+sed '/[Bb]/d'
+sed '/b\|B/d'
+
 ```
 
