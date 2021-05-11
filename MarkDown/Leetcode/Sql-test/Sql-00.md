@@ -225,6 +225,15 @@ END
 `Answer`:
 
 ```sql
+/*way-1*/
+select
+a.score
+,count(distinct b.score) as  `Rank`
+from scores a
+join scores b
+where b.score >=a.score
+group by a.id
+order by a.score desc;
 ```
 
 #### [180. 连续出现的数字](https://leetcode-cn.com/problems/consecutive-numbers/)
@@ -272,4 +281,3 @@ Result 表：
 1 是唯一连续出现至少三次的数字。
 ```
 
-`Answer`:

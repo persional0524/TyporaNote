@@ -136,6 +136,15 @@ where hire_date = (
     select distinct hire_date from employees order by hire_date desc limit 2,1
 )
 ;
+/*way-3*/
+select *
+from employees e1
+where (select count(distinct e2.hire_date)
+      from employees e2
+      where e1.hire_date < e2.hire_date) = 2 #只需要找到日期小于其他人数为2即可。（注意倒数第三，其实日期是排第三）
+      
+      
+select * from employees e1,employees e2  where e1.hire_date < e2.hire_date;
 ```
 
 ==LIMIT m,n : 表示从第m+1条开始，取n条数据；==
@@ -235,4 +244,234 @@ PRIMARY KEY (`emp_no`,`dept_no`));
 请你查找各个部门领导薪水详情以及其对应部门编号dept_no，输出结果以salaries.emp_no升序排序，并且请注意输出结果里面dept_no列是最后一列，以上例子输入如下:
 
 ![img](SQL-00.assets/4AD4F3D1E977477D6DF98854EC10149D.png)
+
+```sql
+select
+a.*,b.dept_no
+from salaries a
+inner join dept_manager b
+on a.emp_no = b.emp_no
+where a.to_date = '9999-01-01'
+and b.to_date = '9999-01-01'
+```
+
+### 4.查找所有已经分配部门的员工的last_name和first_name以及dept_no
+
+有一个员工表，employees简况如下:
+
+![img](SQL-00.assets/2DD8A8D108E674BCB32D6E32B03492C1.png)
+
+有一个部门表，dept_emp简况如下:
+
+![img](SQL-00.assets/4BF7C729BECEE5D9215DF0C0B22855A0.png)
+
+建表语句如下:
+
+```sql
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+```
+
+```sql
+CREATE TABLE `dept_emp` (
+`emp_no` int(11) NOT NULL,
+`dept_no` char(4) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`dept_no`));
+```
+
+
+
+请你查找所有已经分配部门的员工的last_name和first_name以及dept_no，未分配的部门的员工不显示，以上例子如下:
+
+![img](SQL-00.assets/92EDD0ECE3222E00AE2F555AC9153034.png)
+
+`Answer`:
+
+```sql
+select
+a.last_name
+,a.first_name
+,b.dept_no
+from employees a
+inner join dept_emp b
+on a.emp_no = b.emp_no
+```
+
+### 5.查找所有员工的last_name和first_name以及对应部门编号dept_no
+
+有一个员工表，employees简况如下:
+
+![img](SQL-00.assets/2DD8A8D108E674BCB32D6E32B03492C1-20210509165717809.png)
+
+有一个部门表，dept_emp简况如下:
+
+![img](SQL-00.assets/4BF7C729BECEE5D9215DF0C0B22855A0-20210509165717692.png)
+
+建表语句如下:
+
+```sql
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+```
+
+```sql
+CREATE TABLE `dept_emp` (
+`emp_no` int(11) NOT NULL,
+`dept_no` char(4) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`dept_no`));
+```
+
+
+
+请你查找所有已经分配部门的员工的last_name和first_name以及dept_no，也包括暂时没有分配具体部门的员工，以上例子如下:
+
+![img](SQL-00.assets/6CE804D2EED8A40F6DB3CA3B3F0E3BC8.png)
+
+`Answer`:
+
+```sql
+select 
+a.last_name
+,a.first_name
+,ifnull(b.dept_no,null) as dept_no
+from employees a
+left join dept_emp b
+on a.emp_no = b.emp_no
+
+```
+
+### 7.查找薪水涨幅超过15次的员工号emp_no以及其对应的涨幅次数t
+
+有一个薪水表，salaries简况如下:
+
+![img](SQL-00.assets/8307279490CB9F89069769B3CDABC925.png)
+
+建表语句如下:
+
+```sql
+CREATE TABLE `salaries` (
+`emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`from_date`));
+```
+
+
+请你查找薪水记录超过15次的员工号emp_no以及其对应的记录次数t，以上例子输出如下:
+
+![img](SQL-00.assets/85F393DA0762A39426D8D7C5958C8976.png)
+
+`Answer`:
+
+```sql
+select
+emp_no
+,count(emp_no) as t
+from salaries
+group by emp_no
+having
+count(emp_no)>15
+
+select emp_no, count(to_date) as t
+from salaries
+group by emp_no
+having t > 15;
+```
+
+### 8.找出所有员工当前具体的薪水salary情况
+
+有一个薪水表，salaries简况如下:
+
+![img](SQL-00.assets/0B07E4326822CEB36DFC0A8856794250.png)
+
+建表语句如下:
+
+```sql
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+```
+
+请你找出所有员工具体的薪水salary情况，对于相同的薪水只显示一次,并按照逆序显示，以上例子输出如下:
+
+![img](SQL-00.assets/D272D88115F2A8870C9D588A098CDD57.png)
+
+`Answer`:
+
+```sql
+select distinct salary
+from salaries
+where to_date='9999-01-01'
+order by salary desc
+```
+
+### 10.获取所有非manager的员工emp_no
+
+有一个员工表employees简况如下:
+
+![img](SQL-00.assets/013613CC3F594F2FB7444E6AD1DE4CDA.png)
+
+有一个部门领导表dept_manager简况如下:
+
+![img](SQL-00.assets/EFBA0FC874C43A13F3732087E07217A6.png)
+
+建表语句如下:
+
+```sql
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+
+CREATE TABLE `dept_manager` (
+`dept_no` char(4) NOT NULL,
+`emp_no` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`dept_no`));
+```
+
+请你找出所有非部门领导的员工emp_no，以上例子输出:
+
+![img](SQL-00.assets/1EB9F3AEE88291A8FF5D3E30063143CF.png)
+
+`Answer`:
+
+```sql
+select emp_no
+from employees where emp_no 
+not in (select emp_no from dept_manager);
+
+select e.emp_no
+from employees as e 
+left join dept_manager as dm
+on e.emp_no = dm.emp_no
+where dm.dept_no is null;
+```
 

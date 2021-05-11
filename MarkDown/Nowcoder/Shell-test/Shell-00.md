@@ -399,7 +399,8 @@ awk '{for(i=1;i<=NF;i++)uid[$i]++}END{for( item in uid) {print item,uid[item]}}'
 3 go
 
 ```shell
-awk '{print $2}' nowcoder_10.txt|awk '{for(i=1;i<=NF;i++){row[$i] += 1;}}END{for(i in row){if(row[i]>1)print row[i]" "i}}'|sort -r
+awk '{print $2}' nowcoder_10.txt|awk '{for(i=1;i<=NF;i++){row[$i] += 1;}}END{for(i in row){if(row[i]>1)print row[i]" "i}}'
+#|sort -r
 
 
 awk '{row[$2]++}END{for(i in row){if(row[i]>1)print row[i],i}}' nowcoder.txt
@@ -495,6 +496,18 @@ do
     count=0
 done<./nowcoder.txt
 echo "sum is ${sum}"
+#####################################
+cnt=1
+sum=0
+while read line
+do
+    r=`echo $line|grep -oE "[12345]"|wc -l`
+    echo "line${cnt} number: ${r}"
+    $((cnt++))
+    $((sum+=$r))
+done
+echo "sum is ${sum}"
+<./nowcoder.txt
 #####################################
 #!/bin/bash
 declare -A m
