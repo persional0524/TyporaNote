@@ -42,7 +42,7 @@ def sift(li, low, high):
         # 如果右孩子存在，且比左孩子大，指向右孩子
         if j + 1 <= high and li[j] < li[j + 1]:
             j = j + 1
-        if li[i] > tmp:
+        if li[j] > tmp:
             li[i] = li[j]
             i = j
             j = 2 * i + 1

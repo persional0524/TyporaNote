@@ -74,6 +74,74 @@ group by
 a.dept_no
 )
 order by  a.dept_no asc;
+
+
+/*
+1、方法一：使用窗口排序函数
+【注】DENSE_RANK() OVER（PARTITION dept_no ORDER BY salary DESC）可以得出以
+部门为单位的员工的工资排名，可以满足并列第1的要求
+*/
+select
+a.dept_no
+,a.emp_no
+,a.salary
+from (
+select  
+a.dept_no
+,a.emp_no
+,a.salary
+,dense_rank() over(partition by a.dept_no order by a.salary desc) rn
+from
+(
+select
+a.dept_no
+,a.emp_no
+,b.salary
+from dept_emp a
+inner join salaries b
+on a.emp_no = b.emp_no
+where a.to_date='9999-01-01'
+    and b.to_date='9999-01-01'
+) a
+    )a
+where a.rn=1
+order by a.dept_no;
+
+
+/*2、方法二：如果mysql数据库没有排序函数，则可以使用非等值自连接的方法来实现类似DENSE_RANK()
+函数的功能，语句比较长，可以不过原理简单的，如下：*/
+SELECT D.dept_no,D.emp_no,D.salary FROM(
+    SELECT (
+        SELECT COUNT( DISTINCT F.salary ) 
+            FROM(
+                  SELECT
+                    A.dept_no,
+                    A.emp_no,
+                    B.salary 
+                  FROM
+                    dept_emp A
+                    INNER JOIN salaries B ON A.emp_no = B.emp_no 
+                  WHERE
+                    A.to_date = '9999-01-01' 
+                    AND B.to_date = '9999-01-01' 
+                ) AS F 
+        WHERE
+            F.salary >= C.salary 
+            AND F.dept_no = C.dept_no 
+        ) AS raking,
+           C.dept_no,C.emp_no,C.salary FROM (
+            SELECT
+                A.dept_no,
+                A.emp_no,
+                B.salary
+            FROM 
+                dept_emp A
+            INNER JOIN salaries B ON A.emp_no = B.emp_no
+            WHERE 
+            A.to_date = '9999-01-01'
+            AND B.to_date = '9999-01-01' ) C ) D 
+WHERE D.raking = 1
+ORDER BY D.dept_no
 ```
 
 ### 15.查找employees表所有emp_no为奇数
