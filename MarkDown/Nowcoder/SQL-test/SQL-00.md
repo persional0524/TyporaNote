@@ -144,7 +144,18 @@ where (select count(distinct e2.hire_date)
       where e1.hire_date < e2.hire_date) = 2 #只需要找到日期小于其他人数为2即可。（注意倒数第三，其实日期是排第三）
       
       
-select * from employees e1,employees e2  where e1.hire_date < e2.hire_date;
+    select a.emp_no,
+    a.birth_date,
+    a.first_name,
+    a.last_name,
+    a.gender,
+    a.hire_date
+    from (
+        select 
+        t.*
+        ,row_number() over(order by t.hire_date desc) as rn
+        from employees t) a
+where a.rn = 3
 ```
 
 ==LIMIT m,n : 表示从第m+1条开始，取n条数据；==

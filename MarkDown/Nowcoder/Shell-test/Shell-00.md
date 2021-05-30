@@ -269,9 +269,9 @@ awk 'BEGIN{sum = 0};{(sum = sum + $6)} ; END{print sum}' nowcoder.txt
 awk '{sum=sum+$6} END{print sum}'
 
 awk '{
-        count += $6
-    }
-    END {print count
+count += $6
+}
+END {print count
 }' nowcoder.txt
 ```
 
