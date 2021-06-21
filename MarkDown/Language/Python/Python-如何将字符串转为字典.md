@@ -1,12 +1,12 @@
 在工作中遇到一个小问题，需要将一个 `python` 的字符串转为字典，比如字符串：
 
-```
+```python
 user_info = '{"name" : "john", "gender" : "male", "age": 28}'
 ```
 
 我们想把它转为下面的字典：
 
-```
+```python
 user_dict = {"name" : "john", "gender" : "male", "age": 28}
 ```
 
@@ -14,7 +14,7 @@ user_dict = {"name" : "john", "gender" : "male", "age": 28}
 
 **1、通过 json 来转换**
 
-```
+```python
 >>> import json
 >>> user_info= '{"name" : "john", "gender" : "male", "age": 28}'
 >>> user_dict = json.loads(user_info)
@@ -28,7 +28,7 @@ user_dict = {"name" : "john", "gender" : "male", "age": 28}
 
 [![复制代码](Python-如何将字符串转为字典.assets/copycode-20210527105226081.gif)](javascript:void(0);)
 
-```
+```python
 >>> import json
 >>> user_info = "{'name' : 'john', 'gender' : 'male', 'age': 28}"
 # 由于字符串使用单引号，会导致运行出错
@@ -50,7 +50,7 @@ ValueError: Expecting property name: line 1 column 2 (char 1)
 
 [![复制代码](Python-如何将字符串转为字典.assets/copycode-20210527105226081.gif)](javascript:void(0);)
 
-```
+```python
 >>> user_info = '{"name" : "john", "gender" : "male", "age": 28}'
 >>> user_dict = eval(user_info)
 >>> user_dict
@@ -67,7 +67,7 @@ ValueError: Expecting property name: line 1 column 2 (char 1)
 
 [![复制代码](Python-如何将字符串转为字典.assets/copycode-20210527105226081.gif)](javascript:void(0);)
 
-```
+```python
 # 让用户输入 `user_info`
 >>> user_info = raw_input('input user info: ')
 # 输入 {"name" : "john", "gender" : "male", "age": 28}，没问题
@@ -83,7 +83,7 @@ ValueError: Expecting property name: line 1 column 2 (char 1)
 
 [![复制代码](Python-如何将字符串转为字典.assets/copycode-20210527105226081.gif)](javascript:void(0);)
 
-```
+```python
 >>> import ast
 >>> user = '{"name" : "john", "gender" : "male", "age": 28}'
 >>> user_dict = ast.literal_eval(user)

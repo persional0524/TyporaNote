@@ -143,7 +143,7 @@ where (select count(distinct e2.hire_date)
       from employees e2
       where e1.hire_date < e2.hire_date) = 2 #只需要找到日期小于其他人数为2即可。（注意倒数第三，其实日期是排第三）
       
-      
+/*way-4*/     
     select a.emp_no,
     a.birth_date,
     a.first_name,
@@ -435,7 +435,15 @@ PRIMARY KEY (`emp_no`));
 select distinct salary
 from salaries
 where to_date='9999-01-01'
-order by salary desc
+order by salary desc;
+
+select 
+s.salary
+from
+salaries s
+where s.to_date = '9999-01-01'
+group by s.salary
+order by s.salary desc;
 ```
 
 ### 10.获取所有非manager的员工emp_no

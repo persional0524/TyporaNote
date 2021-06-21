@@ -1,5 +1,3 @@
-###  1. 写一个 bash脚本以输出一个文本文件 nowcoder.txt中的行数
-
 示例:
 假设 nowcoder.txt 内容如下：
 
@@ -329,6 +327,16 @@ awk '{
  }
 }
 ' ./nowcoder.txt |sort -n -k2
+
+awk '{
+    for(i=1;i<=NF;i++){
+        row[$i] +=1;
+    }
+}END{
+    for(k in row){
+        print k,row[k]
+    }
+}' ./nowcoder.txt|sort -n -k2
 
  #!/bin/bash
 # 声明 map 类型

@@ -297,3 +297,101 @@ union
 select 2,'NICK','WAHLBERG','2006-02-15 12:34:33';
 ```
 
+### 36.**创建一个actor_name表**
+
+对于如下表actor，其对应的数据为:
+
+| actor_id | first_name | last_name | last_update         |
+| :------- | :--------- | :-------- | :------------------ |
+| 1        | PENELOPE   | GUINESS   | 2006-02-15 12:34:33 |
+| 2        | NICK       | WAHLBERG  | 2006-02-15 12:34:33 |
+
+请你创建一个actor_name表，并且将actor表中的所有first_name以及last_name导入该表. 
+
+actor_name表结构如下：
+
+| 列表       | 类型        | 是否为NULL | 含义 |
+| :--------- | :---------- | :--------- | :--- |
+| first_name | varchar(45) | not null   | 名字 |
+| last_name  | varchar(45) | not null   | 姓氏 |
+
+```sql
+create table actor_name
+select first_name ,last_name from actor;
+```
+
+### 37.**对first_name创建唯一索引uniq_idx_firstname**
+
+针对如下表actor结构创建索引： 
+
+(注:在 SQLite 中,除了重命名表和在已有的表中添加列,ALTER TABLE 命令不支持其他操作， 
+
+mysql支持ALTER TABLE创建索引)
+
+```sql
+CREATE TABLE actor  (
+   actor_id  smallint(5)  NOT NULL PRIMARY KEY,
+   first_name  varchar(45) NOT NULL,
+   last_name  varchar(45) NOT NULL,
+   last_update  datetime NOT NULL);
+```
+
+对first_name创建唯一索引uniq_idx_firstname，对last_name创建普通索引idx_lastname 
+
+```sql
+create unique index uniq_idx_firstname on actor(first_name);
+create index idx_lastname on actor(last_name);
+```
+
+### 38.**针对actor表创建视图actor_name_view**
+
+针对actor表创建视图actor_name_view，只包含first_name以及last_name两列，并对这两列重新命名，first_name为first_name_v，last_name修改为last_name_v：
+
+```sql
+CREATE TABLE  actor  (
+   actor_id  smallint(5)  NOT NULL PRIMARY KEY,
+   first_name  varchar(45) NOT NULL,
+   last_name  varchar(45) NOT NULL,
+   last_update datetime NOT NULL);
+```
+
+```sql
+create view actor_name_view as 
+select 
+first_name as first_name_v
+,last_name as last_name_v
+from actor;
+
+create view actor_name_view (first_name_v,last_name_v) as 
+select 
+first_name ,last_name
+from actor;
+```
+
+### 39.针对上面的salaries表emp_no字段创建索引idx_emp_no，查询emp_no为10005,
+
+```sql
+# 针对salaries表emp_no字段创建索引idx_emp_no，查询emp_no为10005, 使用强制索引。
+CREATE TABLE `salaries` (
+`emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`from_date`));
+create index idx_emp_no on salaries(emp_no);
+```
+
+```sqlite
+select 
+* from salaries
+indexed by idx_emp_no
+where emp_no='10005'
+```
+
+```mysql
+select 
+* from salaries
+force index (idx_emp_no)
+where emp_no='10005'
+```
+
